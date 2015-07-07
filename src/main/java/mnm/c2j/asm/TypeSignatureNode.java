@@ -1,4 +1,4 @@
-package mnm.c2j;
+package mnm.c2j.asm;
 
 import java.util.List;
 

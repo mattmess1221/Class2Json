@@ -1,6 +1,5 @@
-package mnm.c2j;
+package mnm.c2j.asm;
 
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.objectweb.asm.AnnotationVisitor;
@@ -11,8 +10,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.google.common.collect.Lists;
-
+import mnm.c2j.Kind;
+import mnm.c2j.SyntheticClassException;
 import mnm.c2j.json.AnnotationInstanceJson;
 import mnm.c2j.json.BaseClassJson;
 import mnm.c2j.json.CallableJson;
@@ -102,7 +101,7 @@ public class ClassJsonVisitor extends ClassVisitor {
         AnnotationInstanceJson anno = new AnnotationInstanceJson();
         anno.setType(Type.getType(desc).getClassName());
         json.addAnnotated(anno);
-        return new AVisitor(anno);
+        return new AnnotationJsonVisitor(anno);
     }
 
     @Override
@@ -234,7 +233,7 @@ public class ClassJsonVisitor extends ClassVisitor {
             AnnotationInstanceJson anno = new AnnotationInstanceJson();
             anno.setType(Type.getType(desc).getClassName());
             json.addAnnotated(anno);
-            return new AVisitor(anno);
+            return new AnnotationJsonVisitor(anno);
         }
     }
 
@@ -253,7 +252,7 @@ public class ClassJsonVisitor extends ClassVisitor {
             AnnotationInstanceJson anno = new AnnotationInstanceJson();
             anno.setType(Type.getType(desc).getClassName());
             json.addAnnotated(anno);
-            return new AVisitor(anno);
+            return new AnnotationJsonVisitor(anno);
         }
 
         @Override
@@ -270,116 +269,12 @@ public class ClassJsonVisitor extends ClassVisitor {
             AnnotationInstanceJson anno = new AnnotationInstanceJson();
             anno.setType(Type.getType(desc).getClassName());
             json.getArgument(parameter).addAnnotated(anno);
-            return new AVisitor(anno);
+            return new AnnotationJsonVisitor(anno);
         }
 
         @Override
         public AnnotationVisitor visitAnnotationDefault() {
             return new AnnotationValueVisitor((MethodJson) json);
-        }
-    }
-
-    private class AnnotationValueVisitor extends AnnotationVisitor {
-
-        private MethodJson json;
-
-        public AnnotationValueVisitor(MethodJson json) {
-            super(Opcodes.ASM5);
-            this.json = json;
-        }
-
-        @Override
-        public void visit(String name, Object value) {
-            json.setDefaultValue(new AnnotationInstanceJson.Value(value.getClass().getCanonicalName(), value));
-        }
-
-        @Override
-        public void visitEnum(String name, String desc, String value) {
-            json.setDefaultValue(new AnnotationInstanceJson.Value(Type.getType(desc).getClassName(), value));
-        }
-
-        @Override
-        public AnnotationVisitor visitArray(String name) {
-            ArrayVisitor av = new ArrayVisitor();
-            json.setDefaultValue(new AnnotationInstanceJson.Value("array", av.list));
-            return av;
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(String name, String desc) {
-            AnnotationInstanceJson anno = new AnnotationInstanceJson();
-            json.setDefaultValue(new AnnotationInstanceJson.Value(Type.getType(desc).getClassName(), anno));
-            return new AVisitor(anno);
-        }
-    }
-
-    private class AVisitor extends AnnotationVisitor {
-
-        private AnnotationInstanceJson json;
-
-        public AVisitor(AnnotationInstanceJson json) {
-            super(Opcodes.ASM5);
-            this.json = json;
-        }
-
-        @Override
-        public void visit(String name, Object value) {
-            json.addArg(name, new AnnotationInstanceJson.Value(value.getClass().getName(), value));
-        }
-
-        @Override
-        public void visitEnum(String name, String desc, String value) {
-            // TODO Auto-generated method stub
-            json.addArg(name, new AnnotationInstanceJson.Value(Type.getType(desc).getClassName(), value));
-            super.visitEnum(name, desc, value);
-        }
-
-        @Override
-        public AnnotationVisitor visitArray(String name) {
-            ArrayVisitor av = new ArrayVisitor();
-            json.addArg(name, new AnnotationInstanceJson.Value("array", av.list));
-            return av;
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(String name, String desc) {
-            AnnotationInstanceJson anno = new AnnotationInstanceJson();
-            json.addArg(name, new AnnotationInstanceJson.Value(Type.getType(desc).getClassName(), anno));
-            return new AVisitor(anno);
-        }
-
-    }
-
-    private class ArrayVisitor extends AnnotationVisitor {
-
-        private List<AnnotationInstanceJson.Value> list = Lists.newArrayList();
-
-        public ArrayVisitor() {
-            super(Opcodes.ASM5);
-        }
-
-        @Override
-        public void visit(String name, Object value) {
-            list.add(new AnnotationInstanceJson.Value(value.getClass().getCanonicalName(), value));
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(String name, String desc) {
-            AnnotationInstanceJson anno = new AnnotationInstanceJson();
-            list.add(new AnnotationInstanceJson.Value(Type.getType(desc).getClassName(), anno));
-            return new AVisitor(anno);
-        }
-
-        @Override
-        public AnnotationVisitor visitArray(String name) {
-            ArrayVisitor av = new ArrayVisitor();
-            list.add(new AnnotationInstanceJson.Value("array", av.list));
-            return av;
-        }
-
-        @Override
-        public void visitEnum(String name, String desc, String value) {
-            list.add(new AnnotationInstanceJson.Value(Type.getType(desc).getClassName(), value));
         }
     }
 

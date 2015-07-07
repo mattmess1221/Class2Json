@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import mnm.c2j.asm.ClassJsonVisitor;
 import mnm.c2j.json.AnnotationJson;
 import mnm.c2j.json.ClassJson;
 import mnm.c2j.json.EnumJson;
