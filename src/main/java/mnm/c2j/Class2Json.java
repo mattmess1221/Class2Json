@@ -55,7 +55,7 @@ public abstract class Class2Json<T> {
             try {
                 ClassReader cr = getClassReader(c);
                 ClassJsonVisitor cv = new ClassJsonVisitor();
-                cr.accept(cv, ClassReader.SKIP_CODE);
+                cr.accept(cv, ClassReader.SKIP_FRAMES);
                 if (!processed.containsKey(cv.getPackage())) {
                     PackageJson j = new PackageJson();
                     processed.put(cv.getPackage(), j);

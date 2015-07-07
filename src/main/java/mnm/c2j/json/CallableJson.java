@@ -44,4 +44,10 @@ public class CallableJson extends NamedJson {
         exceptions.add(e);
     }
 
+    public int getParameterCount() {
+        if (args == null)
+            return 0;
+        return args.size();
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -219,6 +220,10 @@ public class ClassJsonVisitor extends ClassVisitor {
         return (access & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC;
     }
 
+    private static boolean isStatic(int access) {
+        return (access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC;
+    }
+
     private class FieldJsonVisitor extends FieldVisitor {
 
         private VariableJson json;
@@ -240,7 +245,6 @@ public class ClassJsonVisitor extends ClassVisitor {
     private class MethodJsonVisitor extends MethodVisitor {
 
         private CallableJson json;
-        private int index;
 
         public MethodJsonVisitor(CallableJson json) {
             super(Opcodes.ASM5);
@@ -256,12 +260,21 @@ public class ClassJsonVisitor extends ClassVisitor {
         }
 
         @Override
+        public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+            // Workaround for visitParameter not working
+            int id = isStatic(json.getAccess()) ? index : index - 1;
+            if (id >= 0 && id < json.getParameterCount()) {
+                json.getArgument(id).setName(name);
+            }
+        }
+
+        @Override
         public void visitParameter(String name, int access) {
             // FIXME: Doesn't get called
-            VariableJson param = json.getArgument(index);
-            param.setAccess(access);
-            param.setName(name);
-            index++;
+            // VariableJson param = json.getArgument(index);
+            // param.setAccess(access);
+            // param.setName(name);
+            // index++;
         }
 
         @Override
