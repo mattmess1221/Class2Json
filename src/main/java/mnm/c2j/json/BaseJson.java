@@ -8,9 +8,9 @@ import com.google.gson.annotations.SerializedName;
 public abstract class BaseJson {
 
     @SerializedName("annotated")
-    private List<String> annotatedWith;
+    private List<AnnotationInstanceJson> annotatedWith;
 
-    public void addAnnotated(String anno) {
+    public void addAnnotated(AnnotationInstanceJson anno) {
         if (annotatedWith == null)
             annotatedWith = Lists.newArrayList();
         annotatedWith.add(anno);
