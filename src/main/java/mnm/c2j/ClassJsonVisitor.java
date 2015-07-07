@@ -45,7 +45,7 @@ public class ClassJsonVisitor extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         if (isSynthetic(access))
-            throw new IllegalArgumentException(); // skip this class
+            throw new SyntheticClassException(); // skip this class
         pkg = name.replace('/', '.').substring(0, name.lastIndexOf('/'));
         kind = Kind.getKind(access);
         json = kind.newJson();

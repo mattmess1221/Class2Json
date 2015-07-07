@@ -1,11 +1,16 @@
 package mnm.c2j;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 
 import com.google.gson.Gson;
@@ -17,20 +22,44 @@ import mnm.c2j.json.EnumJson;
 import mnm.c2j.json.InterfaceJson;
 import mnm.c2j.json.PackageJson;
 
-public class Class2Json {
+public abstract class Class2Json<T> {
+
+    private List<T> toProcess = new ArrayList<>();
+    private Map<String, PackageJson> processed = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
-        Map<String, PackageJson> packages = new HashMap<>();
-        for (String c : args) {
+        Class2Json<String> c2j = new StringClass();
+        for (String s : args) {
+            c2j.addToProcess(s);
+        }
+        c2j.process();
+        c2j.saveFile(new File("output.json"));
+    }
+
+    /**
+     * Gets a {@link ClassReader} for the object given. Extenders may want to
+     * give the exception a more descriptive message.
+     *
+     * @param t The object to be read
+     * @return A class reader for the object
+     * @throws IOException Thrown by ClassReader
+     */
+    protected abstract ClassReader getClassReader(T t) throws IOException;
+
+    /**
+     * Processes the declared objects for class structures.
+     */
+    public void process() {
+        for (T c : toProcess) {
             try {
-                ClassReader cr = new ClassReader(c);
+                ClassReader cr = getClassReader(c);
                 ClassJsonVisitor cv = new ClassJsonVisitor();
                 cr.accept(cv, ClassReader.SKIP_CODE);
-                if (!packages.containsKey(cv.getPackage())) {
+                if (!processed.containsKey(cv.getPackage())) {
                     PackageJson j = new PackageJson();
-                    packages.put(cv.getPackage(), j);
+                    processed.put(cv.getPackage(), j);
                 }
-                PackageJson pkg = packages.get(cv.getPackage());
+                PackageJson pkg = processed.get(cv.getPackage());
                 switch (cv.getType()) {
                 case CLASS:
                     pkg.addClass((ClassJson) cv.getJson());
@@ -45,14 +74,71 @@ public class Class2Json {
                     pkg.addInterface((InterfaceJson) cv.getJson());
                     break;
                 }
-            } catch (IllegalArgumentException e) {
-
+            } catch (SyntheticClassException e) {
+                // ignore synthetic classes
+            } catch (IOException e) {
+                LogManager.getLogger().warn(e);
             }
         }
+    }
+
+    /**
+     * Adds an object to be processed.
+     *
+     * @param t The object
+     */
+    public void addToProcess(T t) {
+        toProcess.add(t);
+    }
+
+    public Map<String, PackageJson> getProcessed() {
+        return processed;
+    }
+
+    /**
+     * Serializes discovered classes structures and writes it to a file.
+     *
+     * @param file The file name
+     * @throws IOException If a write error occurs
+     */
+    public void saveFile(File file) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Writer w = new FileWriter("output.json");
-        w.write(gson.toJson(packages));
+        Writer w = new FileWriter(file);
+        w.write(gson.toJson(processed));
         w.flush();
         w.close();
+    }
+
+    /**
+     * For a class names on the classpath.
+     */
+    public static class StringClass extends Class2Json<String> {
+
+        @Override
+        protected ClassReader getClassReader(String t) throws IOException {
+            return new ClassReader(t);
+        }
+    }
+
+    /**
+     * For byte arrays
+     */
+    public static class BytesClass extends Class2Json<byte[]> {
+
+        @Override
+        protected ClassReader getClassReader(byte[] bytes) throws IOException {
+            return new ClassReader(bytes);
+        }
+    }
+
+    /**
+     * For streams
+     */
+    public static class StreamClass extends Class2Json<InputStream> {
+
+        @Override
+        protected ClassReader getClassReader(InputStream t) throws IOException {
+            return new ClassReader(t);
+        }
     }
 }
