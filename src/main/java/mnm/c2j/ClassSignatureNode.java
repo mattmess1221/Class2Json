@@ -1,18 +1,19 @@
 package mnm.c2j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 public class ClassSignatureNode extends SignatureVisitor {
 
-    public Map<String, TypeSignatureNode> typeArgs = new HashMap<>();
+    public Map<String, TypeSignatureNode> typeArgs = Maps.newHashMap();
     public TypeSignatureNode superClass;
-    public List<TypeSignatureNode> interfaces = new ArrayList<>();
+    public List<TypeSignatureNode> interfaces = Lists.newArrayList();
 
     private TypeSignatureNode current;
 

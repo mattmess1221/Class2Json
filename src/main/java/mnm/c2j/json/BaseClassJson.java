@@ -1,9 +1,10 @@
 package mnm.c2j.json;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public abstract class BaseClassJson extends NamedJson {
 
@@ -14,19 +15,19 @@ public abstract class BaseClassJson extends NamedJson {
 
     public void addMethod(MethodJson m) {
         if (methods == null)
-            methods = new ArrayList<>();
+            methods = Lists.newArrayList();
         methods.add(m);
     }
 
     public void addInnerClass(String c) {
         if (innerClasses == null)
-            innerClasses = new ArrayList<>();
+            innerClasses = Lists.newArrayList();
         innerClasses.add(c);
     }
 
     public void addTypeArg(String name, TypeJson t) {
         if (typeArgs == null) {
-            typeArgs = new HashMap<>();
+            typeArgs = Maps.newHashMap();
         }
         typeArgs.put(name, t);
     }

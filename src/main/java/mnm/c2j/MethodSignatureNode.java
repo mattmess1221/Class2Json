@@ -1,7 +1,5 @@
 package mnm.c2j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,13 +8,15 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class MethodSignatureNode extends SignatureVisitor {
 
     public TypeSignatureNode returnType;
-    public List<TypeSignatureNode> parameters = new ArrayList<>();
-    public List<TypeSignatureNode> exceptions = new ArrayList<>();
-    public Map<String, TypeSignatureNode> typeVars = new HashMap<>();
+    public List<TypeSignatureNode> parameters = Lists.newArrayList();
+    public List<TypeSignatureNode> exceptions = Lists.newArrayList();
+    public Map<String, TypeSignatureNode> typeVars = Maps.newHashMap();
 
     private TypeSignatureNode currentVar;
 

@@ -1,6 +1,5 @@
 package mnm.c2j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.objectweb.asm.Opcodes;
@@ -8,13 +7,14 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import mnm.c2j.json.TypeJson;
 
 public class TypeSignatureNode extends SignatureVisitor {
 
     public String type;
-    public List<TypeSignatureNode> typeArgs = new ArrayList<>();
+    public List<TypeSignatureNode> typeArgs = Lists.newArrayList();
 
     public TypeSignatureNode() {
         super(Opcodes.ASM5);

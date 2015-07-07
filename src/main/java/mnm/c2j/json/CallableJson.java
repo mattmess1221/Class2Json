@@ -1,10 +1,10 @@
 package mnm.c2j.json;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 
 public class CallableJson extends NamedJson {
@@ -16,7 +16,7 @@ public class CallableJson extends NamedJson {
 
     public void addArgument(VariableJson v) {
         if (args == null)
-            args = new ArrayList<>();
+            args = Lists.newArrayList();
         if (v.getName() == null)
             v.setName("arg" + args.size());
         args.add(v);
@@ -34,13 +34,13 @@ public class CallableJson extends NamedJson {
 
     public void addTypeVar(String name, TypeJson t) {
         if (typeVariables == null)
-            typeVariables = new HashMap<>();
+            typeVariables = Maps.newHashMap();
         typeVariables.put(name, t);
     }
 
     public void addException(TypeJson e) {
         if (exceptions == null)
-            exceptions = new ArrayList<>();
+            exceptions = Lists.newArrayList();
         exceptions.add(e);
     }
 

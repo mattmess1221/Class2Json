@@ -33,7 +33,7 @@ public enum Kind {
     public BaseClassJson newJson() {
         try {
             return jsonClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

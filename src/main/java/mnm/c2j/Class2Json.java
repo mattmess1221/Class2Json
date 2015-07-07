@@ -5,14 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -24,8 +24,8 @@ import mnm.c2j.json.PackageJson;
 
 public abstract class Class2Json<T> {
 
-    private List<T> toProcess = new ArrayList<>();
-    private Map<String, PackageJson> processed = new HashMap<>();
+    private List<T> toProcess = Lists.newArrayList();
+    private Map<String, PackageJson> processed = Maps.newHashMap();
 
     public static void main(String[] args) throws IOException {
         Class2Json<String> c2j = new StringClass();

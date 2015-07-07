@@ -1,8 +1,9 @@
 package mnm.c2j.json;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class TypeJson extends BaseJson {
 
@@ -29,7 +30,7 @@ public class TypeJson extends BaseJson {
 
     public void addArg(TypeJson t) {
         if (args == null)
-            args = new ArrayList<>();
+            args = Lists.newArrayList();
         args.add(t);
     }
 }

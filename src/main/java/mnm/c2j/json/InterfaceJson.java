@@ -1,8 +1,8 @@
 package mnm.c2j.json;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 
 public class InterfaceJson extends BaseClassJson {
@@ -17,13 +17,13 @@ public class InterfaceJson extends BaseClassJson {
 
     public void addConstant(VariableJson c) {
         if (constants == null)
-            constants = new ArrayList<>();
+            constants = Lists.newArrayList();
         constants.add(c);
     }
 
     public void addInterface(TypeJson i) {
         if (interfaces == null)
-            interfaces = new ArrayList<>();
+            interfaces = Lists.newArrayList();
         interfaces.add(i);
     }
 }

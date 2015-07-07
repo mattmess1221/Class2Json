@@ -1,7 +1,8 @@
 package mnm.c2j.json;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class PackageJson extends BaseJson {
 
@@ -12,25 +13,25 @@ public class PackageJson extends BaseJson {
 
     public void addClass(ClassJson c) {
         if (classes == null)
-            classes = new ArrayList<>();
+            classes = Lists.newArrayList();
         classes.add(c);
     }
 
     public void addInterface(InterfaceJson i) {
         if (interfaces == null)
-            interfaces = new ArrayList<>();
+            interfaces = Lists.newArrayList();
         interfaces.add(i);
     }
 
     public void addAnnotation(AnnotationJson a) {
         if (annotations == null)
-            annotations = new ArrayList<>();
+            annotations = Lists.newArrayList();
         annotations.add(a);
     }
 
     public void addEnum(EnumJson e) {
         if (enums == null)
-            enums = new ArrayList<>();
+            enums = Lists.newArrayList();
         enums.add(e);
     }
 }
