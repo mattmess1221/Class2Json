@@ -29,12 +29,12 @@ public class ClassSignatureNode extends SignatureVisitor {
 
     @Override
     public void visitClassType(String name) {
-        current.type = name;
+        current.type = name.replaceAll("[/$]", ".");
     }
 
     @Override
     public void visitInnerClassType(String name) {
-        current.type = name;
+        current.type = name.replaceAll("[/$]", ".");
     }
 
     @Override

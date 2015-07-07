@@ -27,7 +27,7 @@ public class TypeSignatureNode extends SignatureVisitor {
 
     @Override
     public void visitBaseType(char descriptor) {
-        this.type = descriptor + "";
+        this.type = Type.getType(descriptor + "").getClassName();
     }
 
     @Override
@@ -39,12 +39,12 @@ public class TypeSignatureNode extends SignatureVisitor {
 
     @Override
     public void visitClassType(String name) {
-        type = name;
+        type = name.replaceAll("[/$]", ".");
     }
 
     @Override
     public void visitInnerClassType(String name) {
-        type = name;
+        type = name.replaceAll("[/$]", ".");
     }
 
     @Override
