@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:5.2.1'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -10,6 +19,9 @@ version = '1.0.1'
 repositories {
     jcenter()
 }
+configurations {
+    libjar
+}
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -17,10 +29,37 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'org.ow2.asm:asm-debug-all:5.0.3'
     compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+    libjar 'com.google.code.findbugs:jsr305:3.0.0'
 }
 
-jar {
+task fatjar(type:Jar) {
+    from sourceSets.main.output
+    classifier 'fat'
+    destinationDir = file 'build/tmp'
+    archiveName = 'bloated.jar'
+    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it) }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+task proguard(type: proguard.gradle.ProGuardTask, dependsOn: fatjar) {
+    injars file(fatjar.archivePath)
+    outjars file('build/tmp/proguard-shrunk.jar')
+    def javaHome = System.properties['java.home']
+    libraryjars configurations.libjar.files + ["$javaHome/lib/rt.jar", "$javaHome/bin/rt.jar", "$javaHome/../Classes/classes.jar"].collect {
+        new File(it)
+    }
+    dontoptimize()
+    dontobfuscate()
+    keep """public class mnm.c2j.** {
+    public *;
+}"""
+}
+task alljar(type:Jar, dependsOn: proguard) {
+    classifier 'all'
+    from zipTree(proguard.outputs.files.singleFile)
     manifest {
         attributes 'Main-Class': 'mnm.c2j.Class2Json'
     }
+}
+artifacts{
+    archives alljar
 }
