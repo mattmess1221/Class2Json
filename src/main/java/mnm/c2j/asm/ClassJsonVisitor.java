@@ -211,7 +211,8 @@ public class ClassJsonVisitor extends ClassVisitor {
 
     @Override
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
-        if (outerName != null && !isSynthetic(access)) {
+        String canName = pkg.replace('.', '/') + '/' + json.getName();
+        if (outerName != null && !isSynthetic(access) && canName.equals(outerName)) {
             json.addInnerClass(innerName);
         }
     }
