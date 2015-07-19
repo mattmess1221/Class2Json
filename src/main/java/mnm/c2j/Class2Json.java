@@ -98,7 +98,7 @@ public abstract class Class2Json<T> {
             c2j.addToProcess(s);
         }
         c2j.process();
-        c2j.saveFile(new File("output.json"));
+        c2j.saveFile(output);
     }
 
     private static void printUsage() {
